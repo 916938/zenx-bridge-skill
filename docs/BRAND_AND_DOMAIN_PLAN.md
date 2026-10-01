@@ -21,7 +21,7 @@
 本产品源自 `Tencent/BrowserSkill`（MIT）。当前对外仍以 **BrowserSkill** 名称出现，存在两类问题：
 
 1. **商标风险**：`BrowserSkill` 是上游的产品名称，继续使用既是商标问题，也会让用户误以为是官方版本。
-2. **定位失真**：`browserskill-new` / `zenx-bridge-skill` 这一组名字暗示"基础版 / 高级版"，但二者实际是**能力层与使用层的互补关系**，不是高低配。
+2. **定位失真**：`browserskill-new` / `browserskill-pro` 这一组名字暗示"基础版 / 高级版"，但二者实际是**能力层与使用层的互补关系**，不是高低配。
 
 同时，品牌名、域名、付费内容体系需要统一规划，否则后续每次新增组件都要重新决策一次。
 
@@ -317,7 +317,7 @@ v19 清单中"计划新注"包含 **`browserskillhub.com`（浏览器技能枢�
 | 项 | 旧 | 新 | 说明 |
 |---|---|---|---|
 | 仓库（能力层） | `916938/browserskill-new` | **`916938/zenx-bridge`** | GitHub 改名，旧链接由官方重定向兜底 |
-| 仓库（使用层） | `916938/zenx-bridge-skill` | **`916938/zenx-bridge-skill`** | 同上 |
+| 仓库（使用层） | `916938/browserskill-pro` | **`916938/zenx-bridge-skill`** | 同上 |
 | 更新源（`update.rs`） | `.../browserskill-new/releases/latest/download/version.json` | `.../zenx-bridge/...` | 旧二进制走旧 URL → 重定向 → 仍可取到 |
 | 安装入口 | `raw.githubusercontent.com/916938/browserskill-new/...` | `.../zenx-bridge/...` | 同上 |
 | 文档链接 | 三仓 README / SKILL.md 内 URL | 统一改为新路径 | 已替换 |
@@ -350,7 +350,7 @@ v19 清单中"计划新注"包含 **`browserskillhub.com`（浏览器技能枢�
 | **P1** | 对外身份改名：扩展 `name`、i18n `brandName` + 硬编码串、双语 README、`AGENT_INSTALL.md`、安装脚本、Cargo description、`NOTICE` | `pnpm ext:build` 通过；扩展列表显示新名；`git grep -i browserskill` 仅剩历史档案 |
 | **P2** | 域名与站点上线 | `bridge.zenx.tech` 可访问，`/docs` `/skill` `/compare` 就位 |
 | **P3** | 仓库改名 + `update.rs` + 安装脚本 | **`bsk update` 实测成功**（含旧二进制） |
-| **P4** | npm 包名改为自有 scope（现为上游 `@wxg-prc-cpg/*`） | 包名不再含上游标识 |
+| ~~P4~~ | ~~npm 包名改为自有 scope~~ | ✅ **已完成**：`@wxg-prc-cpg/browser-skill-dsh-plugin` → `@916938/zenx-bridge-dsh-plugin`（含插件 id、cordis.patch.yml、CI 的 npm scope）。**发布前需在 npm 创建 `@916938` scope** |
 | **不做** | `MERGE_REVIEW.md`、`RELEASE_NOTES_*`、`UPGRADE_MERGE_SUMMARY.md`、`TEST_REPORT_*` | 保持原样——那是历史事实，篡改会失真 |
 
 每阶段之间跑一次全量测试（Rust 762 / 扩展 2062 / pro 306），确认无回归。
