@@ -90,6 +90,11 @@ Tencent/BrowserSkill (官方版本)
 
 如需获取包含 Windows 兼容性修复和多浏览器支持的最新稳定基础版本，请参见 [browserskill-new](https://github.com/916938/zenx-bridge)。
 
+> **命名对照**（以下三个名字都指 CLI/扩展那个 fork）—— GitHub 仓库名 `zenx-bridge`；
+> 旧文档里叫 `browserskill-new`；**本仓库旁边的本地检出目录是 `../zenx-bridge-main`**。
+> 两个仓库的协作规则（哪些 fork-only 改动必须同步到本 skill）见 `AGENTS.md` → Companion repositories；
+> 同步台账在 `../zenx-bridge-main/docs/UPSTREAM_SYNC.md`。
+
 ### 适用场景
 
 - 阅读用户已经登录的网站
