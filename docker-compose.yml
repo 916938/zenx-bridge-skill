@@ -1,5 +1,5 @@
 # ============================================================
-# BrowserSkill Pro - Docker Compose 编排
+# ZenX Bridge Skill - Docker Compose 编排
 # 完整的浏览器自动化开发环境
 #
 # 用法:
@@ -10,7 +10,7 @@
 #
 # 包含服务:
 #   1. bsk-daemon: BrowserSkill daemon (WebSocket server)
-#   2. browserskill-pro: Skill 运行时 + Python helpers
+#   2. zenx-bridge-skill: Skill 运行时 + Python helpers
 #   3. chrome-browser: Headed/headless Chrome with extension
 #   4. (可选) redis: 缓存和会话存储
 # ============================================================
@@ -23,7 +23,7 @@ services:
   # 服务 1: BrowserSkill Daemon（核心通信层）
   # ----------------------------------------------------------
   bsk-daemon:
-    image: browserskill/bsk-daemon:latest
+    image: zenxbridge/bsk-daemon:latest
     # 或使用本地构建:
     # build:
     #   context: .
@@ -50,7 +50,7 @@ services:
       # 共享日志目录
       - ./logs:/app/logs:ro
     networks:
-      - browserskill-network
+      - zenxbridge-network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:52801/health"]
       interval: 30s
@@ -62,13 +62,13 @@ services:
         condition: service_healthy
 
   # ----------------------------------------------------------
-  # 服务 2: BrowserSkill Pro（Skill + Helpers）
+  # 服务 2: ZenX Bridge Skill（Skill + Helpers）
   # ----------------------------------------------------------
-  browserskill-pro:
+  zenx-bridge-skill:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: browserskill-pro
+    container_name: zenx-bridge-skill
     restart: unless-stopped
     environment:
       - PYTHONUNBUFFERED=1
@@ -94,10 +94,10 @@ services:
       - ./config/.bsk:/app/.bsk:ro
     
     networks:
-      - browserskill-network
+      - zenxbridge-network
     command: >
       bash -c "
-        echo '🚀 BrowserSkill Pro 容器启动...' &&
+        echo '🚀 ZenX Bridge Skill 容器启动...' &&
         python3 skill/scripts/doctor.py --wait-connected 60 ||
         echo '⚠️ Daemon 未就绪，容器将继续运行' &&
         tail -f /dev/null  # 保持容器运行（用于调试）
@@ -132,7 +132,7 @@ services:
       # 扩展目录（从宿主机加载）
       - ./extensions:/opt/extensions:ro
     networks:
-      - browserskill-network
+      - zenxbridge-network
     # 启动脚本：安装扩展并打开浏览器
     entrypoint: ["/bin/bash", "-c"]
     command:
@@ -168,7 +168,7 @@ services:
       - redis-data:/data
     command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
     networks:
-      - browserskill-network
+      - zenxbridge-network
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
@@ -191,7 +191,7 @@ services:
       - grafana-data:/var/lib/grafana
       - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
     networks:
-      - browserskill-network
+      - zenxbridge-network
     profiles:
       - monitoring  # 默认不启动，需显式启用
 
@@ -199,7 +199,7 @@ services:
 # 网络定义
 # ============================================================
 networks:
-  browserskill-network:
+  zenxbridge-network:
     driver: bridge
     ipam:
       config:

@@ -10,15 +10,22 @@ def configure_utf8_output():
             reconfigure(encoding="utf-8")
 
 
+def _append_options(args, kwargs):
+    for key, value in kwargs.items():
+        if value is True:
+            args.append(f"--{key}")
+            continue
+        args.append(f"--{key}")
+        args.append(str(value))
+
+
 def bsk(command: str, session=None, *pos_args, **kwargs):
     args = ["bsk"]
     args.extend(command.split())
     args.extend(pos_args)
     if session:
         args.extend(["--session", session])
-    for key, value in kwargs.items():
-        args.append(f"--{key}")
-        args.append(str(value))
+    _append_options(args, kwargs)
     args.append("--json")
 
     result = subprocess.run(args, capture_output=True, text=True, encoding="utf-8", errors="replace")
@@ -47,9 +54,7 @@ def bsk_with_raw(command: str, session=None, *pos_args, **kwargs):
     args.extend(pos_args)
     if session:
         args.extend(["--session", session])
-    for key, value in kwargs.items():
-        args.append(f"--{key}")
-        args.append(str(value))
+    _append_options(args, kwargs)
 
     result = subprocess.run(args, capture_output=True, text=True, encoding="utf-8", errors="replace")
 

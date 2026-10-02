@@ -41,22 +41,48 @@ Prerequisite links:
 
 - BrowserSkill official repository: `https://github.com/tencent/browserskill`
 
+## Session health checks
+
+When an active session misbehaves (operations time out, tabs vanish, commands feel slow), run the session-aware health check before restarting anything:
+
+```powershell
+py -3 scripts\health_checker.py --session <id>
+```
+
+```bash
+python3 scripts/health_checker.py --session <id>
+```
+
+The report is always JSON with a top-level `status`:
+
+| Status | Meaning |
+|---|---|
+| `healthy` | All checks passed; keep working. |
+| `degraded` | Usable but impaired (high daemon latency, zombie session with zero tabs, recent daemon restart). |
+| `unhealthy` | Do not continue: daemon unreachable, no connected browser, version skew, or the session is gone. |
+
+Each issue carries `severity` (`warning`/`critical`/`fatal`), `category`, and whether it is `auto_recoverable`. `metrics` includes daemon latency, uptime, connected browsers, version-skew count, and the session's tab count. `recovery_suggestions` lists the next command to run; environment-level problems point back to `doctor.py`.
+
+Pass `--auto` to attempt automatic recovery for recoverable issues (currently tab reload). Sessions reported as `session_state`/`fatal` are not recoverable — stop them with `bsk session stop <id>` and start a new session.
+
 ## Development environment setup
 
-This section covers the complete development environment for working with BrowserSkill Pro — both for using the helpers and for contributing to the skill package.
+This section covers the complete development environment for working with ZenX Bridge Skill — both for using the helpers and for contributing to the skill package.
 
 ### Runtime dependencies
 
-These are required to run BrowserSkill Pro in agent workflows:
+These are required to run ZenX Bridge Skill in agent workflows:
 
 | Component | Minimum Version | Recommended | Notes |
 |-----------|-----------------|-------------|-------|
 | **Python** | 3.8+ | 3.10+ or 3.12+ | For `doctor.py`, `snapshot.py`, `screenshot.py`, `wait_for.py` |
 | **PowerShell** | 5.1+ (Windows) | 7+ (PowerShell Core cross-platform) | For `invoke.ps1` and Windows workflows |
 | **Bash** | Any (Git Bash, WSL, macOS) | Latest | For `invoke.sh` and POSIX workflows |
-| **bsk CLI** | 0.1.0+ | **0.1.7** (current) | Must match extension protocol version |
-| **Browser extension** | MV3-compatible | **0.1.3** (current) | Chrome Web Store or built from source |
+| **bsk CLI** | 0.1.0+ | **0.2.3** (current release) | Must match extension protocol version |
+| **Browser extension** | MV3-compatible | **0.2.3** (current release) | Chrome Web Store or built from source; shares one semver with CLI since 0.2.2 |
 | **Git** | 2.20+ | Latest | For version control and skill installation |
+
+Builds newer than the 0.2.3 release additionally provide full-page screenshots, `wheel` / `scroll-to` / `focus` / `blur`, extension-owned automation settings, `session start --name` with operation audit, and (fork only) `--browser-id` user-tab commands. `SKILL.md` marks every such command with its tier; nothing breaks on an older build, the commands are simply absent.
 
 ### Python environment
 
@@ -96,7 +122,7 @@ $PSVersionTable.PSVersion   # should be 5.1+ (Windows) or 7+ (cross-platform)
 
 ```bash
 # Check bsk CLI version
-bsk --version              # should be 0.1.7 or compatible
+bsk --version              # should be 0.2.3 or compatible
 
 # Quick connectivity test (no browser actions)
 bsk status                 # should show daemon and extension status
@@ -115,7 +141,7 @@ bsk status                 # extension status should be "connected"
 
 ### Development tools (for contributors only)
 
-If you plan to modify BrowserSkill Pro helper scripts or documentation:
+If you plan to modify ZenX Bridge Skill helper scripts or documentation:
 
 | Tool | Version | Purpose |
 |------|---------|---------|
@@ -209,9 +235,14 @@ This runs a local dev server that automatically rebuilds and reloads the extensi
 
 > **Important**: The `bsk` CLI and the browser extension must match in protocol version.
 >
-> **Current versions (as of 2026-07-16)**:
-> - CLI: `0.1.7` (from `Cargo.toml` workspace.package.version)
-> - Extension: `0.1.3` (from `apps/extension/package.json`)
+> **Current versions (as of 2026-09-17)**:
+> - CLI: `0.2.3` (from `Cargo.toml` workspace.package.version)
+> - Extension: `0.2.3` (from `apps/extension/package.json` — CLI / Extension / DSH Plugin share one semver since 0.2.2)
+> - Daemon protocol: `1.3` (from `daemon/state.rs`)
+>
+> Newer capabilities are not in released binaries. Build them from source when you need them, and expect `bsk <cmd> --help` — not the version number — to decide availability:
+> - Post-0.2.3 merges: `screenshot --full-page`, `wheel`, `scroll-to`, `focus` / `blur`, `session start --name`, automation settings replacing `--unattended`.
+> - Fork-only (`916938/zenx-bridge`): `tab list|create|select --browser-id`, `tab observe`. See [user-tab-control.md](user-tab-control.md).
 >
 > **Protocol compatibility**:
 > - If you update one side (CLI or extension), you must rebuild/reinstall the other as well
@@ -295,31 +326,29 @@ Install BrowserSkill from [Chrome Web Store](https://chromewebstore.google.com/d
 
 For custom builds or protocol changes, see [Building the extension from source](#building-the-extension-from-source) above.
 
-### 3. Install the BrowserSkill Pro skill package
+### 3. Install the ZenX Bridge Skill skill package
 
 The base `bsk` CLI ships with a built-in skill (`bsk install-skill`). For enhanced helper scripts and layered documentation, install this Pro package:
 
-**Option A: Automatic installation (if your harness supports `bsk install-skill`)**
+**Option A: Installed through `bsk install-skill`**
 
 ```bash
-# List supported harnesses on your machine
+# Which harnesses are installed on this machine?
 bsk install-skill --list
 
-# Install into a specific harness (interactive)
-bsk install-skill
-
-# Non-interactive mode (for scripts)
-bsk install-skill -H <harness-id> -y
-
-# Install into all detected harnesses
-bsk install-skill --all -y
+# Install this Pro package so auto-sync cannot overwrite it
+bsk install-skill -H <harness-id> --source ./skill/SKILL.md --force -y
 ```
 
-Use <kbd>Space</kbd> to select the target harness, then <kbd>Enter</kbd> to install.
+`--source` records the directory as **custom**: later `bsk session start` auto-sync leaves it alone, so editing the installed copy is safe and persistent. Without `--source`, `bsk install-skill` installs the CLI's bundled skill and will keep it updated; installing over an existing `browser-skill` directory requires `--force`.
+
+The bundled skill can still be installed interactively for comparison purposes (`bsk install-skill`, then <kbd>Space</kbd> to select and <kbd>Enter</kbd> to install) or into every detected harness (`bsk install-skill --all -y`).
 
 **Option B: Manual installation**
 
-Copy this repository's `skill/` directory into your agent's skills directory as `browserskill-pro/`. See the main README for agent-specific paths.
+Copy this repository's `skill/` directory into your agent's skills directory as `zenx-bridge-skill/`. See the main README for agent-specific paths.
+
+> A skill directory copied by hand has no provenance marker, so `bsk doctor` reports it as a paused skill (`WARN`, reasons include `Untracked` and `LocalChanges`) and leaves the files alone rather than overwriting local edits. Install with `--source` to record that intent up front.
 
 ### Post-install verification
 
@@ -373,6 +402,11 @@ If the extension remains disconnected, open the browser, verify BrowserSkill is 
 | Version skew (exit code 5) | Upgrade or reinstall both CLI and extension to matching versions. |
 | Session not found | Start a new session with `bsk session start`. |
 | Wrong browser targeted | Run `bsk browsers` to list instances, then start a session with `--browser <id>`. |
+| `unsupported_feature` requiring daemon protocol 1.2 / 1.3 | `request-help` needs protocol 1.3 and `tab borrow --timeout` needs 1.2. Update CLI **and** extension together, then `bsk daemon restart`. Sessions and reading keep working meanwhile. |
+| `automatic daemon startup is disabled (BSK_AUTO_START=0)` | Something set `BSK_AUTO_START=0`. Start the daemon from the environment that owns it using the same `BSK_HOME`, then retry — see [sandboxed-agents.md](sandboxed-agents.md). |
+| Daemon dies between Agent commands | The sandbox reaps child processes. Keep the daemon in the owning host environment and connect with `BSK_HOME` + `BSK_AUTO_START=0`. |
+| `bsk screenshot --full-page` fails immediately | Restricted browser pages, nested scrollers and virtualized lists are unsupported, and `--full-page` conflicts with `--ref`. Use viewport captures staggered with `bsk wheel` / `bsk scroll-to`. See [long-screenshot.md](long-screenshot.md). |
+| Old automation flags appear to do nothing | `--unattended`, `tab borrow --no-confirm` and `BSK_REQUEST_HELP=off` are deprecated and ignored. The extension's 自动化设置 toggles decide confirmation and human help. A `disabled` outcome from `request-help` is not a completion signal. |
 
 ## Multiple browsers
 
@@ -384,6 +418,28 @@ bsk browsers
 
 # Start a session on a specific browser
 bsk session start --browser <instance-id-or-label>
+
+# Same targeting with a routing key that can never be an ambiguous or stale label
+bsk session start --browser-id 03c3e47f
 ```
 
 If multiple browsers are connected and no `--browser` is specified, `bsk session start` returns an error with a table of available instances. Each browser gets its own Agent Window and session lifecycle.
+
+## Sandboxed Agent commands
+
+Some Agent hosts terminate all child processes when a command returns, which kills the daemon immediately. Symptoms: every command cold-starts, `bsk status` flaps, or the daemon never appears in `bsk status` at all.
+
+Keep one daemon in the owning host environment and connect over shared local IPC:
+
+```bash
+# Once, from a normal host terminal (outside the sandbox)
+BSK_HOME=/absolute/shared/bsk bsk daemon start
+
+# Then on every sandboxed command
+BSK_HOME=/absolute/shared/bsk BSK_AUTO_START=0 bsk doctor
+BSK_HOME=/absolute/shared/bsk BSK_AUTO_START=0 bsk session start
+```
+
+`BSK_HOME` overrides the daemon's runtime directory (default `~/.bsk`); both sides must resolve to the same directory. `BSK_AUTO_START=0` disables implicit startup only — the command still connects to a running daemon and reports the problem if none is listening.
+
+Full procedure, diagnostics and a four-step verification: [sandboxed-agents.md](sandboxed-agents.md).

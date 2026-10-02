@@ -1,5 +1,5 @@
 """
-Error response formatter for BrowserSkill Pro v1.1.0
+Error response formatter for ZenX Bridge Skill v1.1.0
 
 Builds standardized JSON error/success responses with:
 - Structured error format (code, category, retryable, suggestions)

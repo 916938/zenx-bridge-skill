@@ -1,0 +1,805 @@
+{
+  "version": 2,
+  "note": "单一数据源：skill/SKILL.md 与 skill/references/protocol.md 的命令表格由本文件生成。改命令先改这里，再跑 scripts/generate_command_docs.py。字段：blocks=出现在哪些生成区；command=protocol.md 形式（不含 --session）；cli=SKILL.md 形式（含 --session，缺省同 command）；args=协议参数（可带版本注记）；purpose=用途；protocol_purpose=protocol.md 用途（缺省同 purpose）。",
+  "tiers": {
+    "0.2.3": "已发布基线（2026-09-08）",
+    "0.2.4+": "0.2.3 之后合入，需更新构建",
+    "fork": "仅 916938/zenx-bridge，上游发布版没有"
+  },
+  "actions": [
+    {
+      "action": "navigate",
+      "blocks": [
+        "skill-action-map",
+        "protocol-actions"
+      ],
+      "tier": "0.2.3",
+      "command": "bsk navigate <url>",
+      "cli": "bsk navigate <url> --session <id>",
+      "args": [
+        "url",
+        "wait_until",
+        "timeout"
+      ],
+      "purpose": "Open a URL in the selected tab.",
+      "protocol_purpose": "Navigate the selected tab."
+    },
+    {
+      "action": "tab_create",
+      "blocks": [
+        "skill-action-map",
+        "protocol-actions"
+      ],
+      "tier": "0.2.3",
+      "command": "bsk tab create",
+      "cli": "bsk tab create --url <url> --session <id>",
+      "args": [
+        "url",
+        "active",
+        "index"
+      ],
+      "purpose": "Create a new tab in the Agent Window."
+    },
+    {
+      "action": "tab_list",
+      "blocks": [
+        "skill-action-map",
+        "protocol-actions"
+      ],
+      "tier": "0.2.3",
+      "command": "bsk tab list",
+      "cli": "bsk tab list --scope <scope> --session <id>",
+      "args": [
+        "scope"
+      ],
+      "purpose": "List tabs in scope; match a URL client-side (there is no server-side URL filter). Use `--scope user` to find user-owned tabs.",
+      "protocol_purpose": "List tabs in scope (`user`/`agent`/`all`). No server-side URL filter; match URLs client-side."
+    },
+    {
+      "action": "observe",
+      "blocks": [
+        "skill-action-map",
+        "protocol-actions"
+      ],
+      "tier": "0.2.3",
+      "command": "bsk observe",
+      "cli": "bsk observe --session <id>",
+      "args": [
+        "max_depth",
+        "max_tokens",
+        "probe_hover",
+        "(0.2.2+)"
+      ],
+      "purpose": "Read a semantic VOM view: URL, title, text, controls, hover surfaces, and `@e` refs. Preferred first observation."
+    },
+    {
+      "action": "snapshot",
+      "blocks": [
+        "skill-action-map",
+        "protocol-actions"
+      ],
+      "tier": "0.2.3",
+      "command": "bsk snapshot",
+      "cli": "bsk snapshot --session <id>",
+      "args": [],
+      "purpose": "Read a stricter static accessibility tree with `@e` refs when the semantic view is not enough."
+    },
+    {
+      "action": "click",
+      "blocks": [
+        "skill-action-map",
+        "protocol-actions"
+      ],
+      "tier": "0.2.3",
+      "command": "bsk click <ref>",
+      "cli": "bsk click <ref-or-selector> --session <id>",
+      "args": [
+        "ref/selector"
+      ],
+      "purpose": "Click a snapshot ref or selector.",
+      "protocol_purpose": "Click an `@e` ref or CSS selector."
+    },
+    {
+      "action": "hover",
+      "blocks": [
+        "skill-action-map",
+        "protocol-actions"
+      ],
+      "tier": "0.2.3",
+      "command": "bsk hover <ref>",
+      "cli": "bsk hover <ref-or-selector> --session <id>",
+      "args": [
+        "ref/selector",
+        "modifiers",
+        "settle"
+      ],
+      "purpose": "Hover to reveal menus; observe again before clicking the revealed item's own ref.",
+      "protocol_purpose": "Hover a ref/selector to reveal menus; observe again before acting on revealed items."
+    },
+    {
+      "action": "fill",
+      "blocks": [
+        "skill-action-map",
+        "protocol-actions"
+      ],
+      "tier": "0.2.3",
+      "command": "bsk fill <ref>",
+      "cli": "bsk fill <ref-or-selector> --value <text> --session <id>",
+      "args": [
+        "ref/selector",
+        "value"
+      ],
+      "purpose": "Replace text in an input, textarea, or contenteditable field.",
+      "protocol_purpose": "Replace plain text in inputs, textareas, or contenteditable editors; rich-text markup is not preserved."
+    },
+    {
+      "action": "evaluate",
+      "blocks": [
+        "skill-action-map",
+        "protocol-actions"
+      ],
+      "tier": "0.2.3",
+      "command": "bsk evaluate <code>",
+      "cli": "bsk evaluate <expression> --session <id>",
+      "args": [
+        "expression"
+      ],
+      "purpose": "Read bounded page state or recover a real link.",
+      "protocol_purpose": "Read attributes or perform unsupported page logic."
+    },
+    {
+      "action": "screenshot",
+      "blocks": [
+        "skill-action-map",
+        "protocol-actions"
+      ],
+      "tier": "0.2.3",
+      "command": "bsk screenshot",
+      "cli": "bsk screenshot --ref <ref> --out <path> --session <id>",
+      "args": [
+        "ref",
+        "format",
+        "full_page",
+        "timeout"
+      ],
+      "purpose": "Capture the page or an element.",
+      "protocol_purpose": "Capture the visible tab, crop to one `@eN` element with `ref`, or stitch the whole page with `full_page` (0.2.4+; see below)."
+    },
+    {
+      "action": "wheel",
+      "blocks": [
+        "protocol-actions",
+        "skill-additional"
+      ],
+      "tier": "0.2.4+",
+      "command": "bsk wheel",
+      "cli": "bsk wheel --delta-y <px> --session <id>",
+      "args": [
+        "optional ref/selector",
+        "delta_x",
+        "delta_y",
+        "modifiers",
+        "timeout"
+      ],
+      "purpose": "Native mouse-wheel event at the viewport centre or an optional target; `--delta-x`, `--modifiers alt,ctrl,meta,shift` (0.2.4+). Dispatch success does not mean the scroll finished.",
+      "protocol_purpose": "Native mouse-wheel input at the viewport centre or a target (0.2.4+)."
+    },
+    {
+      "action": "scroll_to",
+      "blocks": [
+        "protocol-actions",
+        "skill-additional"
+      ],
+      "tier": "0.2.4+",
+      "command": "bsk scroll-to",
+      "cli": "bsk scroll-to <ref-or-selector> --session <id>",
+      "args": [
+        "ref/selector",
+        "timeout"
+      ],
+      "purpose": "Scroll an element and its frames into view; returns the visible portion's bounds in viewport CSS pixels (0.2.4+). Partial visibility counts as success.",
+      "protocol_purpose": "Scroll an element and its frames into view, returning the visible bounds (0.2.4+)."
+    },
+    {
+      "action": "focus",
+      "blocks": [
+        "protocol-actions",
+        "skill-additional"
+      ],
+      "tier": "0.2.4+",
+      "command": "bsk focus",
+      "cli": "bsk focus <ref-or-selector> --session <id>",
+      "args": [
+        "ref/selector"
+      ],
+      "purpose": "Move or drop keyboard focus explicitly (0.2.4+).",
+      "protocol_purpose": "Move keyboard focus to an element (0.2.4+)."
+    },
+    {
+      "action": "blur",
+      "blocks": [
+        "protocol-actions",
+        "skill-additional"
+      ],
+      "tier": "0.2.4+",
+      "command": "bsk blur",
+      "cli": "bsk blur <ref-or-selector> --session <id>",
+      "args": [
+        "ref/selector"
+      ],
+      "purpose": "Move or drop keyboard focus explicitly (0.2.4+).",
+      "protocol_purpose": "Remove keyboard focus from an element (0.2.4+)."
+    },
+    {
+      "action": "tab_close",
+      "blocks": [
+        "skill-action-map",
+        "protocol-actions"
+      ],
+      "tier": "0.2.3",
+      "command": "bsk tab close <tab-id>",
+      "cli": "bsk tab close <tab-id> --session <id>",
+      "args": [
+        "tab_id"
+      ],
+      "purpose": "Close the selected task-owned tab."
+    },
+    {
+      "action": "tab_select",
+      "blocks": [
+        "protocol-actions",
+        "skill-additional"
+      ],
+      "tier": "0.2.3",
+      "command": "bsk tab select <tab-id>",
+      "cli": "bsk tab select <tab-id> --session <id>",
+      "args": [
+        "tab_id"
+      ],
+      "purpose": "Focus an agent tab (e.g. after finding a background tab)."
+    },
+    {
+      "action": "session_stop",
+      "blocks": [
+        "skill-action-map",
+        "protocol-actions"
+      ],
+      "tier": "0.2.3",
+      "command": "bsk session stop <id>",
+      "cli": "bsk session stop <session-id>",
+      "args": [
+        "session_id"
+      ],
+      "purpose": "Stop the session and close all associated tabs.",
+      "protocol_purpose": "Close all tabs associated with the session (`--force` in the helper)."
+    },
+    {
+      "action": "status",
+      "blocks": [
+        "skill-additional",
+        "protocol-additional"
+      ],
+      "tier": "0.2.3",
+      "command": "bsk status",
+      "args": [],
+      "purpose": "Connection health, connected browsers, active sessions",
+      "cli": "bsk status"
+    },
+    {
+      "action": "browsers",
+      "blocks": [
+        "skill-additional",
+        "protocol-additional"
+      ],
+      "tier": "0.2.3",
+      "command": "bsk browsers",
+      "args": [],
+      "purpose": "List all connected browser instances",
+      "protocol_purpose": "List all connected browser instances (id, name, version, label, sessions)",
+      "cli": "bsk browsers"
+    },
+    {
+      "action": "session-start-browser",
+      "blocks": [
+        "skill-additional",
+        "protocol-additional"
+      ],
+      "tier": "0.2.3",
+      "command": "bsk session start --browser <id-or-label>",
+      "args": [],
+      "purpose": "Target a specific browser when multiple are connected",
+      "cli": "bsk session start --browser <id-or-label>"
+    },
+    {
+      "action": "session-start-browser-id",
+      "blocks": [
+        "skill-additional",
+        "protocol-additional"
+      ],
+      "tier": "0.2.3",
+      "command": "bsk session start --browser-id <instance-id>",
+      "args": [],
+      "purpose": "Same targeting, exact instance id only; never resolves through a label",
+      "cli": "bsk session start --browser-id <instance-id>"
+    },
+    {
+      "action": "session-start-name",
+      "blocks": [
+        "skill-additional",
+        "protocol-additional"
+      ],
+      "tier": "0.2.4+",
+      "command": "bsk session start --name \"...\"",
+      "args": [],
+      "purpose": "Label the session in local operation audit (0.2.4+; see [references/operation-audit.md](references/operation-audit.md))",
+      "protocol_purpose": "Label the session in local operation audit (0.2.4+); see [operation-audit.md](operation-audit.md)",
+      "cli": "bsk session start --name \"...\""
+    },
+    {
+      "action": "session-start-no-focus",
+      "blocks": [
+        "skill-additional"
+      ],
+      "tier": "0.2.3",
+      "command": "bsk session start --no-focus",
+      "args": [],
+      "purpose": "Open the Agent Window in the background without stealing focus."
+    },
+    {
+      "action": "session-list",
+      "blocks": [
+        "skill-additional",
+        "protocol-additional"
+      ],
+      "tier": "0.2.3",
+      "command": "bsk session list",
+      "args": [],
+      "purpose": "List active sessions",
+      "cli": "bsk session list"
+    },
+    {
+      "action": "session-stop-all",
+      "blocks": [
+        "skill-additional",
+        "protocol-additional"
+      ],
+      "tier": "0.2.3",
+      "command": "bsk session stop --all",
+      "args": [],
+      "purpose": "Stop every active session (emergency cleanup)",
+      "cli": "bsk session stop --all"
+    },
+    {
+      "action": "press",
+      "blocks": [
+        "skill-additional",
+        "protocol-additional"
+      ],
+      "tier": "0.2.3",
+      "command": "bsk press <key>",
+      "args": [
+        "key"
+      ],
+      "purpose": "Send keyboard events",
+      "protocol_purpose": "Send keyboard events (Enter, Ctrl+A, etc.)",
+      "cli": "bsk press <key> --session <id>"
+    },
+    {
+      "action": "select",
+      "blocks": [
+        "skill-additional",
+        "protocol-additional"
+      ],
+      "tier": "0.2.3",
+      "command": "bsk select <ref> --value <v>",
+      "args": [
+        "ref",
+        "value"
+      ],
+      "purpose": "Select dropdown options",
+      "cli": "bsk select <ref> --value <value> --session <id>"
+    },
+    {
+      "action": "navigate-back",
+      "blocks": [
+        "skill-additional",
+        "protocol-additional"
+      ],
+      "tier": "0.2.3",
+      "command": "bsk navigate-back",
+      "args": [],
+      "purpose": "Browser back",
+      "cli": "bsk navigate-back --session <id>"
+    },
+    {
+      "action": "navigate-forward",
+      "blocks": [
+        "skill-additional",
+        "protocol-additional"
+      ],
+      "tier": "0.2.3",
+      "command": "bsk navigate-forward",
+      "args": [],
+      "purpose": "Browser forward",
+      "cli": "bsk navigate-forward --session <id>"
+    },
+    {
+      "action": "reload",
+      "blocks": [
+        "skill-additional",
+        "protocol-additional"
+      ],
+      "tier": "0.2.3",
+      "command": "bsk reload",
+      "args": [
+        "hard"
+      ],
+      "purpose": "Refresh current tab (`--hard` bypasses cache)",
+      "protocol_purpose": "Refresh current tab; use `--hard` to bypass cache",
+      "cli": "bsk reload --session <id>"
+    },
+    {
+      "action": "request-help",
+      "blocks": [
+        "skill-additional",
+        "protocol-additional"
+      ],
+      "tier": "0.2.3",
+      "command": "bsk request-help",
+      "cli": "bsk request-help --session <id> --prompt \"...\"",
+      "args": [
+        "prompt",
+        "title",
+        "target",
+        "timeout"
+      ],
+      "purpose": "Request human intervention for CAPTCHA/login",
+      "protocol_purpose": "Request human intervention"
+    },
+    {
+      "action": "get-html",
+      "blocks": [
+        "skill-additional",
+        "protocol-additional"
+      ],
+      "tier": "0.2.3",
+      "command": "bsk get-html",
+      "args": [],
+      "purpose": "Get page HTML",
+      "cli": "bsk get-html --session <id>"
+    },
+    {
+      "action": "wait-for-navigation",
+      "blocks": [
+        "skill-additional",
+        "protocol-additional"
+      ],
+      "tier": "0.2.3",
+      "command": "bsk wait-for-navigation",
+      "args": [],
+      "purpose": "Wait for navigation to complete",
+      "cli": "bsk wait-for-navigation --session <id>"
+    },
+    {
+      "action": "wait-ms",
+      "blocks": [
+        "skill-additional",
+        "protocol-additional"
+      ],
+      "tier": "0.2.3",
+      "command": "bsk wait-ms <duration>",
+      "args": [
+        "duration"
+      ],
+      "purpose": "Wait for specified duration (no session needed)",
+      "cli": "bsk wait-ms <duration>",
+      "protocol_purpose": "Wait for specified duration"
+    },
+    {
+      "action": "record",
+      "blocks": [
+        "skill-additional"
+      ],
+      "tier": "0.2.3",
+      "command": "bsk record start|stop --session <id>",
+      "args": [],
+      "purpose": "Record a session to trace.json for later replay (see `record.sh` / `record.ps1` helpers). There is no `bsk replay` — to redo a flow, read the trace and reuse session/observe/click/fill."
+    },
+    {
+      "action": "network",
+      "blocks": [
+        "skill-additional"
+      ],
+      "tier": "0.2.3",
+      "command": "bsk network --session <id>",
+      "args": [],
+      "purpose": "Read buffered network responses / failures for a tab (cursor-paginated; see `network.sh` / `network.ps1`)"
+    },
+    {
+      "action": "console",
+      "blocks": [
+        "skill-additional",
+        "protocol-additional"
+      ],
+      "tier": "0.2.3",
+      "command": "bsk console",
+      "args": [],
+      "purpose": "Read buffered console/log/exception messages for a tab (read-only debugging)",
+      "protocol_purpose": "Read buffered console/log/exception messages for a tab (read-only)",
+      "cli": "bsk console --session <id>"
+    },
+    {
+      "action": "upload",
+      "blocks": [
+        "skill-additional",
+        "protocol-additional"
+      ],
+      "tier": "0.2.3",
+      "command": "bsk upload <ref> --file <path>",
+      "cli": "bsk upload <ref> --file <path> --session <id>",
+      "args": [
+        "ref",
+        "file",
+        "mode"
+      ],
+      "purpose": "Stage a local file and attach it to the page (0.2.2+). Default input mode intercepts the native file chooser; `--mode drop` targets an explicit drop zone. Repeat `--file` for multi-file inputs.",
+      "protocol_purpose": "Stage a local file and attach it to the page (0.2.2+); `--mode input|drop`; repeat `--file` for multi-file inputs"
+    },
+    {
+      "action": "download",
+      "blocks": [
+        "skill-additional",
+        "protocol-additional"
+      ],
+      "tier": "0.2.3",
+      "command": "bsk download <ref> --out <path>",
+      "cli": "bsk download <ref> --out <path> --session <id>",
+      "args": [
+        "ref",
+        "out",
+        "overwrite"
+      ],
+      "purpose": "Capture a browser download (0.2.2+). Default-refuses to overwrite an existing file; pass `--overwrite` when replacing is intended.",
+      "protocol_purpose": "Capture a browser download (0.2.2+); default-refuses overwrite, pass `--overwrite` to replace"
+    },
+    {
+      "action": "emulate",
+      "blocks": [
+        "skill-additional",
+        "protocol-additional"
+      ],
+      "tier": "0.2.3",
+      "command": "bsk emulate --device <preset>",
+      "cli": "bsk emulate --device <preset> --session <id>",
+      "args": [
+        "device",
+        "off"
+      ],
+      "purpose": "Emulate a mobile device (viewport, UA, touch) on one tab; presets like `iphone-14`, `pixel-7`; `--off` restores the real environment. New tabs do not inherit emulation.",
+      "protocol_purpose": "Emulate a mobile device (viewport, UA, touch) on one tab; `--off` restores; new tabs do not inherit"
+    },
+    {
+      "action": "window-resize",
+      "blocks": [
+        "skill-additional",
+        "protocol-additional"
+      ],
+      "tier": "0.2.3",
+      "command": "bsk window resize --width <w> --height <h>",
+      "cli": "bsk window resize --width <w> --height <h> --session <id>",
+      "args": [
+        "width",
+        "height"
+      ],
+      "purpose": "Resize the session's Agent Window (100..=7680 CSS px). `bsk session start` also accepts `--width/--height`.",
+      "protocol_purpose": "Resize the session's Agent Window (100..=7680 CSS px)"
+    },
+    {
+      "action": "observe-bounded",
+      "blocks": [
+        "skill-additional"
+      ],
+      "tier": "0.2.3",
+      "command": "bsk observe --max-depth <n> --max-tokens <n> --session <id>",
+      "args": [
+        "max_depth",
+        "max_tokens"
+      ],
+      "purpose": "Bound a semantic observation on a large page; the JSON result reports `truncated`."
+    },
+    {
+      "action": "observe-cursor",
+      "blocks": [
+        "skill-additional"
+      ],
+      "tier": "0.2.4+",
+      "command": "bsk observe --cursor <cursor> --session <id>",
+      "args": [
+        "cursor"
+      ],
+      "purpose": "Continue a truncated observation instead of re-reading the page (0.2.4+). Use your current refs before continuing; it cannot be combined with `--max-depth`, `--probe-hover` or `--debug-surfaces`."
+    },
+    {
+      "action": "screenshot-element",
+      "blocks": [
+        "skill-additional"
+      ],
+      "tier": "0.2.4+",
+      "command": "bsk screenshot --ref @eN --session <id>",
+      "args": [
+        "ref"
+      ],
+      "purpose": "Crop to a DOM element **or a Canvas region**; canvas regions appear as `@eN` refs in `observe` (0.2.4+)."
+    },
+    {
+      "action": "screenshot-full-page",
+      "blocks": [
+        "skill-additional"
+      ],
+      "tier": "0.2.4+",
+      "command": "bsk screenshot --full-page --out <path> --session <id>",
+      "args": [
+        "full_page",
+        "timeout"
+      ],
+      "purpose": "Stitch a whole-page PNG (0.2.4+). Exclusive with `--ref`; `--timeout` sets the capture deadline (default `2m`). See [references/long-screenshot.md](references/long-screenshot.md)."
+    },
+    {
+      "action": "browsers-tab-list",
+      "blocks": [
+        "skill-additional",
+        "protocol-additional"
+      ],
+      "tier": "fork",
+      "command": "bsk tab list --browser-id <id> --scope user",
+      "cli": "bsk tab list --browser-id <instance-id> --scope user",
+      "args": [
+        "browser_id",
+        "scope"
+      ],
+      "purpose": "List a browser's user tabs without starting a session (fork build). Requires `--scope user`.",
+      "protocol_purpose": "List a browser's user tabs without a session (fork build; `--scope user` is required)"
+    },
+    {
+      "action": "browsers-tab-observe",
+      "blocks": [
+        "skill-additional",
+        "protocol-additional"
+      ],
+      "tier": "fork",
+      "command": "bsk tab observe --browser-id <id> --tab-id <id> --expected-origin <url>",
+      "cli": "bsk tab observe --browser-id <instance-id> --tab-id <id> --expected-origin <url>",
+      "args": [
+        "browser_id",
+        "tab_id",
+        "expected_origin",
+        "max_chars"
+      ],
+      "purpose": "Read visible text from a user tab read-only: no injection, no CDP, no form/storage/network access (fork build). `--expected-origin` is required and must match the tab's real origin; `--max-chars` caps output (default `4000`, max `8000`).",
+      "protocol_purpose": "Read-only visible text from a user tab (fork build); see [user-tab-control.md](user-tab-control.md)"
+    },
+    {
+      "action": "browsers-tab-select",
+      "blocks": [
+        "skill-additional",
+        "protocol-additional"
+      ],
+      "tier": "fork",
+      "command": "bsk tab select <tab-id> --browser-id <id>",
+      "cli": "bsk tab select <tab-id> --browser-id <instance-id> [--expected-origin <url>]",
+      "args": [
+        "tab_id",
+        "browser_id",
+        "expected_origin"
+      ],
+      "purpose": "Activate a user tab and refocus its original window (fork build). Pass the origin to re-verify the tab before it is focused.",
+      "protocol_purpose": "Activate a user tab and refocus its window (fork build)"
+    },
+    {
+      "action": "browsers-tab-create",
+      "blocks": [
+        "skill-additional",
+        "protocol-additional"
+      ],
+      "tier": "fork",
+      "command": "bsk tab create <url> --browser-id <id>",
+      "cli": "bsk tab create --browser-id <instance-id> <url>",
+      "args": [
+        "browser_id",
+        "url"
+      ],
+      "purpose": "Open a tab in the user's own window instead of the Agent Window (fork build)."
+    },
+    {
+      "action": "browsers-close",
+      "blocks": [
+        "skill-additional",
+        "protocol-additional"
+      ],
+      "tier": "fork",
+      "command": "bsk browsers close --browser-id <id> --confirm",
+      "cli": "bsk browsers close --browser-id <instance-id> --confirm",
+      "args": [
+        "browser_id",
+        "confirm"
+      ],
+      "purpose": "Stop every session of that instance, close all its windows, and let the browser process exit (fork build). The only command that reaches outside a session: it closes windows the agent never touched. Never use it as cleanup — `bsk session stop <id>` is cleanup. Only close an instance the user asked to close, and read `bsk browsers` first; labels and prefixes are rejected. Success is `disconnected: true` in `--json` output; a timeout means the browser is still running. There is no matching \"open\" command — `bsk` never starts browsers.",
+      "protocol_purpose": "Stop every session of that instance and close all its windows so the browser exits (fork build). Not a cleanup command; success is `disconnected: true`. See [user-tab-control.md](user-tab-control.md)"
+    },
+    {
+      "action": "install-skill",
+      "blocks": [
+        "skill-additional",
+        "protocol-additional"
+      ],
+      "tier": "0.2.3",
+      "command": "bsk install-skill --harness <id>",
+      "cli": "bsk install-skill --list",
+      "args": [],
+      "purpose": "Install this skill into local agent harnesses; `--list`, `--all`, `--source <path>`, `--force`; `--source` installs a custom `SKILL.md` and suspends skill auto-update."
+    },
+    {
+      "action": "daemon-start",
+      "blocks": [
+        "skill-additional",
+        "protocol-additional"
+      ],
+      "tier": "0.2.3",
+      "command": "bsk daemon start",
+      "cli": "bsk daemon start|stop|restart",
+      "args": [],
+      "purpose": "Manage the daemon; add `--daemon-idle 2h` or `--session-idle 10m` when starting.",
+      "protocol_purpose": "Manage the daemon directly; `--daemon-idle 2h`, `--session-idle 10m`, `--foreground`"
+    },
+    {
+      "action": "templates",
+      "blocks": [
+        "skill-additional",
+        "protocol-additional"
+      ],
+      "tier": "0.2.3",
+      "command": "bsk templates list\\|get\\|create\\|update\\|delete\\|apply",
+      "args": [],
+      "purpose": "Manage Profile Templates (metadata CRUD + controlled apply; never an account backup or credential migration mechanism).",
+      "protocol_purpose": "Profile Template metadata CRUD + controlled apply (never a credential backup mechanism)",
+      "cli": "bsk templates list|get|create|update|delete|apply"
+    },
+    {
+      "action": "logs",
+      "blocks": [
+        "skill-additional",
+        "protocol-additional"
+      ],
+      "tier": "0.2.3",
+      "command": "bsk logs",
+      "args": [],
+      "purpose": "Print (and optionally follow) the daemon log file.",
+      "cli": "bsk logs"
+    },
+    {
+      "action": "update",
+      "blocks": [
+        "skill-additional",
+        "protocol-additional"
+      ],
+      "tier": "0.2.3",
+      "command": "bsk update",
+      "args": [],
+      "purpose": "Check for and install bsk CLI updates.",
+      "cli": "bsk update"
+    },
+    {
+      "action": "completion",
+      "blocks": [
+        "skill-additional",
+        "protocol-additional"
+      ],
+      "tier": "0.2.3",
+      "command": "bsk completion <shell>",
+      "args": [],
+      "purpose": "Print a tab-completion script for bash, zsh, fish, or powershell.",
+      "protocol_purpose": "Print tab-completion for bash, zsh, fish, or powershell",
+      "cli": "bsk completion <shell>"
+    }
+  ]
+}

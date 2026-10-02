@@ -1,13 +1,13 @@
 # ============================================================
-# BrowserSkill Pro - 开发环境 Docker Compose
+# ZenX Bridge Skill - 开发环境 Docker Compose
 # 用于本地开发和调试，挂载源代码支持热更新
 #
 # 用法:
 #   启动:   docker-compose -f docker-compose.dev.yml up -d
 #   停止:   docker-compose -f docker-compose.dev.yml down
 #   重建:   docker-compose -f docker-compose.dev.yml up --build
-#   进入容器: docker-compose -f docker-compose.dev.yml exec browserskill-pro bash
-#   查看日志: docker-compose -f docker-compose.dev.yml logs -f browserskill-pro
+#   进入容器: docker-compose -f docker-compose.dev.yml exec zenx-bridge-skill bash
+#   查看日志: docker-compose -f docker-compose.dev.yml logs -f zenx-bridge-skill
 #
 # 特点:
 #   ✅ 源代码热挂载（修改代码立即生效）
@@ -21,9 +21,9 @@ version: '3.8'
 services:
 
   # ----------------------------------------------------------
-  # 开发版 BrowserSkill Pro（带热重载）
+  # 开发版 ZenX Bridge Skill（带热重载）
   # ----------------------------------------------------------
-  browserskill-pro-dev:
+  zenx-bridge-skill-dev:
     build:
       context: .
       dockerfile: Dockerfile
@@ -86,7 +86,7 @@ services:
     command: >
       bash -c '
         echo "========================================"
-        echo " 🚀 BrowserSkill Pro 开发环境"
+        echo " 🚀 ZenX Bridge Skill 开发环境"
         echo " 版本: v1.1.0 (Development)"
         echo "========================================"
         echo ""
@@ -114,7 +114,7 @@ services:
           exec "$@"
         else
           echo "💡 提示: 使用 docker compose exec 进入此容器进行开发"
-          echo "   示例: docker compose -f docker-compose.dev.yml exec browserskill-pro-dev bash"
+          echo "   示例: docker compose -f docker-compose.dev.yml exec zenx-bridge-skill-dev bash"
           echo ""
           tail -f /dev/null  # 保持容器运行
         fi
@@ -135,7 +135,7 @@ services:
   # 用于没有本地 daemon 的 CI/CD 或纯 Docker 环境
   # ----------------------------------------------------------
   bsk-daemon-dev:
-    image: browserskill/bsk-daemon:latest
+    image: zenxbridge/bsk-daemon:latest
     container_name: bsk-daemon-dev
     restart: unless-stopped
     profiles:
@@ -171,16 +171,16 @@ volumes:
 #
 # # 进入开发容器
 # dev-shell:
-# 	docker-compose -f docker-compose.dev.yml exec browserskill-pro-dev bash
+# 	docker-compose -f docker-compose.dev.yml exec zenx-bridge-skill-dev bash
 #
 # # 运行测试
 # dev-test:
-# 	docker-compose -f docker-compose.dev.yml exec browserskill-pro-dev \
+# 	docker-compose -f docker-compose.dev.yml exec zenx-bridge-skill-dev \
 # 		python3 -m unittest discover -s tests -v
 #
 # # 查看日志
 # dev-logs:
-# 	docker-compose -f docker-compose.dev.yml logs -f browserskill-pro-dev
+# 	docker-compose -f docker-compose.dev.yml logs -f zenx-bridge-skill-dev
 #
 # # 清理开发环境（删除卷）
 # dev-clean:

@@ -5,6 +5,92 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+#### Synced with `browserskill-new`: quit a browser — `bsk browsers close` (2026-09-18)
+
+`916938/browserskill-new` added a `browser.close` RPC (commits `1628377` → `013e017`, 2026-09-17), the first command that reaches outside a session. It is a **fork-build capability** and does not exist in Tencent/BrowserSkill releases.
+
+- `skill/SKILL.md` — added to the fork tier of the version block, plus a capability entry: `bsk browsers close --browser-id <instance_id> --confirm`. Documented rules: exact `instance_id` only (labels and prefixes are rejected), `--confirm` is mandatory, it closes **every** window of that instance including windows the agent never touched, it is **not** a cleanup command (`bsk session stop` is), and success is the JSON `disconnected: true` — a timeout means the browser is still running.
+- `skill/references/user-tab-control.md` — new "Closing a browser instance" section with the flag table and the fallback for extensions that still answer `unknown_method: browser.close not implemented`.
+
+#### Documentation refresh (2026-09-18)
+
+- `README.md` / `README_ZH.md` — both READMEs still described the 1.0.0 world (bsk 0.1.7 / extension 0.1.3, "current version 1.0.0", "v1.1.0 planned"). They now carry a **版本兼容 / Version compatibility** table (bsk CLI & extension **0.2.3**, daemon protocol **1.3**, plus the 0.2.4+ and fork-build tiers), a rewritten feature table, a 0.2.3-era quick start (`bsk install-skill`, `bsk doctor`, `bsk observe`), new usage examples (`observe`, record/replay, network, upload/download, full-page screenshot, `health_checker.py`, `fallback_chain.py`), an updated project tree, and a roadmap that reflects v1.1.0 as shipped.
+
+## [1.1.0] - 2026-09-17
+
+Aligns the skill with **bsk CLI / extension 0.2.3** (daemon protocol 1.3) and everything merged after that tag, and completes the v1.1.0 P0 reliability work.
+
+### Added
+
+#### Capability tiers
+
+Every command now carries an availability tier instead of implying one version supports everything:
+
+| Tier | Meaning | Examples |
+|---|---|---|
+| **0.2.3** | Released baseline (2026-09-08) | sessions, `observe`, `snapshot`, borrow/return, `request-help`, `record`, `network` / `console`, `upload` / `download`, `emulate`, `templates` |
+| **0.2.4+** | Merged after the 0.2.3 tag; needs a build newer than 2026-09-08 | `screenshot --full-page`, `wheel`, `scroll-to`, `focus` / `blur`, `session start --name` + operation audit, extension automation settings replacing `--unattended` |
+| **Fork build** | `916938/browserskill-new` only, not in upstream releases | `tab list\|create\|select --browser-id`, `tab observe` (2026-09-14+), `browsers close` (2026-09-17+) |
+
+#### New reference documents (adapted from upstream `docs/`)
+
+- `references/long-screenshot.md` — full-page capture contract: `--full-page` vs `--ref` exclusivity, 2-minute default deadline raised with `--timeout`, atomic write, no partial-success failures, OPFS staging rules, version-match requirement.
+- `references/wheel.md` — native wheel input: delta / modifier / target rules, why success means "dispatched" not "scrolled", CSS-pixel and page-zoom caveats, error codes.
+- `references/scroll-to.md` — element reveal contract: returned `x/y/width/height` in viewport CSS pixels, partial visibility counts as success, the rectangle is not an occlusion test.
+- `references/operation-audit.md` — one session = one task, `session start --name`, 执行中/已结束/已中断 statuses, per-OS storage paths and `BSK_HOME`, 30-day retention, metadata-only recording.
+- `references/sandboxed-agents.md` — keep the daemon in the owning host and connect with `BSK_HOME` + `BSK_AUTO_START=0` when a sandbox reaps child processes.
+- `references/user-tab-control.md` — `--browser-id` operations and read-only `tab observe`, written from CLI source because upstream documents none of it.
+
+#### New helpers (v1.1.0 P0)
+
+- `health_checker.py` (roadmap #3) — session-aware diagnostics: environment checks (daemon reachability, connected browsers, version skew, recent restart, daemon latency) plus session checks (liveness, tab-list readability, zero-tab zombies). Emits a JSON `HealthReport` (`healthy` / `degraded` / `unhealthy`) with severity, metrics and recovery suggestions; `--auto` attempts recoverable fixes.
+- `fallback_chain.py` (roadmap #4) — graceful degradation passthrough → legacy → simplified, with an extensible `LevelSpec` registry, per-attempt decision logging, error-category escalation rules, and an emergency-cleanup hook.
+- `tests/test_health_checker.py` (17 cases) and `tests/test_fallback_chain.py` (22 cases).
+
+#### New examples
+
+- `examples/long_screenshot.md` — capture → verify → clean up, plus the staggered fallback.
+- `examples/user_tab_and_scroll.md` — read-only identity check, borrow only to act, scroll, return.
+
+### Changed
+
+- **Recommended versions**: bsk CLI / extension **0.1.7 / 0.1.3 → 0.2.3** (CLI, extension and DSH plugin share one semver since 0.2.2), daemon protocol **1.3**.
+- **`bsk observe` first**: the semantic VOM view is now the default first observation; the reading escalation chain is `observe` → `observe --probe-hover` → `snapshot` → `get-html` → `screenshot`.
+- **`request-help` outcomes** updated to 0.2.2 semantics (`continued`, `completed`, `cancelled`, `timed_out`, `disabled`; `navigated` deprecated).
+- **New commands documented**: `console`, `upload` (`--mode input|drop`), `download` (`--overwrite`), `emulate --device`, `window resize`, `templates`, `logs`, `update`, `completion`, `install-skill --source`, `daemon start --daemon-idle`.
+- **Deprecated automation overrides** section: `--unattended`, `tab borrow --no-confirm` and `BSK_REQUEST_HELP=off` still parse but do nothing; the extension's Automation settings are authoritative, and a `disabled` request-help outcome is a blocker, not a completion signal.
+- **Environment variables** table added (`BSK_DEFAULT_SESSION`, `BSK_INVOKE_TIMEOUT_MS`, `BSK_AUTO_UPDATE`, `BSK_HOME`, `BSK_AUTO_START`).
+- **Smart label semantics**: `instance_id` is the stable routing key; labels are editable aliases that may be duplicated and must never be cached across tasks.
+
+### Fixed
+
+- `screenshot.py` / `screenshot.ps1`: `--full-page` and `--timeout` are forwarded to `bsk screenshot`; `--selector` + `--full-page` is rejected before any daemon call.
+- `bsk_client.py`: `True` values now emit a bare flag (`full-page=True` → `--full-page`) in both `bsk()` and `bsk_with_raw()`.
+- `protocol.md` long-page recipe prefers `scroll-to` / `wheel`; the `evaluate` form is demoted to a fallback for older builds.
+
+### Testing
+
+- **292 tests passing** (1 skipped) — `python -m unittest discover -s tests -v`.
+- 5 new `screenshot.py` cases plus 39 new P0 helper cases in this release cycle.
+
+### Compatibility matrix
+
+| Component | Minimum | Recommended | Status |
+|-----------|---------|-------------|--------|
+| bsk CLI | 0.1.0 | **0.2.3** | ✅ Supported |
+| Browser extension | 0.1.0 | **0.2.3** (must match CLI) | ✅ Supported |
+| Daemon protocol | 1.2 | **1.3** (`request-help` needs 1.3, `tab borrow --timeout` needs 1.2) | ✅ Supported |
+| Node.js | 18+ | 20 LTS | ⚠️ Extension builds only |
+| pnpm | 9.x | 10.17.0 | ⚠️ Pinned for dev |
+| Rust | 1.75+ | 1.85+ / edition 2024 | ⚠️ Source builds only |
+| Python | 3.8+ | 3.12+ | ✅ For helpers |
+
+---
+
 ## [1.0.0] - 2026-07-17
 
 ### 🎉 Initial Release - Dual-Mode Execution Support
@@ -240,6 +326,15 @@ Added new "Dual-mode execution: passthrough vs legacy" section (8 subsections):
 
 ## Version History
 
+### [1.1.0] - 2026-09-17
+- **Release date**: September 17, 2026
+- **Type**: Minor release (capability alignment + reliability)
+- **Highlights**: bsk 0.2.3 / protocol 1.3 alignment, capability tiers, 6 new reference docs, `health_checker.py` + `fallback_chain.py`
+- **Commit**: 004372a
+- **Tag**: v1.1.0
+- **Branch**: main
+- **Tests**: 292 passing (1 skipped)
+
 ### [1.0.0] - 2026-07-17
 - **Release date**: July 17, 2026
 - **Type**: Major release (initial stable version)
@@ -252,4 +347,6 @@ Added new "Dual-mode execution: passthrough vs legacy" section (8 subsections):
 
 ---
 
+[Unreleased]: https://github.com/916938/browserskill-pro/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/916938/browserskill-pro/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/916938/browserskill-pro/releases/tag/v1.0.0

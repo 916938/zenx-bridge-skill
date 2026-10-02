@@ -1,5 +1,5 @@
 """
-Timeout management and signal handling system for BrowserSkill Pro v1.1.0
+Timeout management and signal handling system for ZenX Bridge Skill v1.1.0
 
 Implements a layered timeout architecture:
 - Connect timeout: 10s (daemon connection)

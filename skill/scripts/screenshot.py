@@ -18,6 +18,11 @@ def parse_args():
     parser.add_argument("--quality", type=int, default=80)
     parser.add_argument("--selector", help="Optional @e ref or CSS selector")
     parser.add_argument("--timeout", type=int, default=30)
+    parser.add_argument(
+        "--full-page",
+        action="store_true",
+        help="Stitch a full-page PNG (bsk 0.2.3+); mutually exclusive with --selector",
+    )
     return parser.parse_args()
 
 
@@ -40,12 +45,19 @@ def main():
     args = parse_args()
     if not 0 <= args.quality <= 100:
         raise SystemExit("--quality must be between 0 and 100.")
+    if args.timeout <= 0:
+        raise SystemExit("--timeout must be a positive number of seconds.")
+    if args.selector and args.full_page:
+        raise SystemExit("--selector and --full-page are mutually exclusive.")
 
     kwargs = {}
     if args.selector:
         kwargs["ref"] = args.selector
     if args.output:
         kwargs["out"] = str(args.output)
+    if args.full_page:
+        kwargs["full-page"] = True
+        kwargs["timeout"] = f"{args.timeout}s"
 
     try:
         response = bsk("screenshot", args.session, **kwargs)

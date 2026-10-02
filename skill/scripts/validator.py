@@ -1,5 +1,5 @@
 """
-Input validation and security sanitization layer for BrowserSkill Pro v1.1.0
+Input validation and security sanitization layer for ZenX Bridge Skill v1.1.0
 
 Implements Fail-Fast pattern with:
 - Parameter type checking and coercion

@@ -7,7 +7,9 @@ param(
     [string] $Ref,
 
     [ValidateRange(1, 300)]
-    [int] $TimeoutSec = 30
+    [int] $TimeoutSec = 30,
+
+    [switch] $FullPage
 )
 
 $args = @("screenshot", "--json")
@@ -15,9 +17,17 @@ if ($Session) {
     $args += "--session"
     $args += $Session
 }
+if ($Ref -and $FullPage) {
+    throw "-Ref and -FullPage are mutually exclusive."
+}
 if ($Ref) {
     $args += "--ref"
     $args += $Ref
+}
+if ($FullPage) {
+    $args += "--full-page"
+    $args += "--timeout"
+    $args += "$($TimeoutSec)s"
 }
 if ($OutputPath) {
     $args += "--out"

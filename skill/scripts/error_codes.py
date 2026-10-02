@@ -1,5 +1,5 @@
 """
-Error codes and classification system for BrowserSkill Pro v1.1.0
+Error codes and classification system for ZenX Bridge Skill v1.1.0
 
 Defines the foundational error taxonomy used across all error handling modules:
 - Error categories (TRANSIENT, PERMANENT, SYSTEM, USER_ERROR)

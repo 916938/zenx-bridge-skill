@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ============================================================
-# BrowserSkill Pro 一键安装脚本（Linux / macOS）
+# ZenX Bridge Skill 一键安装脚本（Linux / macOS）
 # 支持 CodeBuddy / WorkBuddy 环境
 #
 # 用法:
@@ -22,7 +22,7 @@
 #   ./install.sh --dry-run                 # 模拟运行
 #
 # 版本: 1.1.0
-# 作者: BrowserSkill Pro Team
+# 作者: ZenX Bridge Skill Team
 # ============================================================
 
 set -euo pipefail
@@ -41,7 +41,7 @@ BOLD='\033[1m'
 # ============================================================
 # 全局变量
 # ============================================================
-REPO_URL="https://github.com/916938/browserskill-pro.git"
+REPO_URL="https://github.com/916938/zenx-bridge-skill.git"
 BRANCH="main"
 TARGET_PATH=""
 FORCE=false
@@ -74,14 +74,14 @@ log_debug() {
 
 show_header() {
     echo -e "${CYAN}========================================${NC}"
-    echo -e "  BrowserSkill Pro 安装向导"
+    echo -e "  ZenX Bridge Skill 安装向导"
     echo -e "  版本: ${SCRIPT_VERSION} | 平台: $(uname -s)"
     echo -e "${CYAN}========================================${NC}\n"
 }
 
 show_help() {
     cat << EOF
-BrowserSkill Pro 安装脚本 - Linux/macOS 版本
+ZenX Bridge Skill 安装脚本 - Linux/macOS 版本
 
 用法:
     $0 [选项]
@@ -105,7 +105,7 @@ BrowserSkill Pro 安装脚本 - Linux/macOS 版本
     $0 -f
 
     # 安装到自定义位置
-    $0 -t ~/my-custom-skills/browserskill-pro
+    $0 -t ~/my-custom-skills/zenx-bridge-skill
 
     # 模拟运行（查看将执行的操作但不实际执行）
     $0 --dry-run -v
@@ -186,11 +186,11 @@ detect_target_path() {
 
     # 检测顺序：CodeBuddy > Claude Code > WorkBuddy > Codex
     local possible_paths=(
-        "$HOME/.codebuddy/skills/browserskill-pro"
-        "$HOME/.claude/skills/browserskill-pro"
-        "$HOME/.claude/commands/browserskill-pro"
-        "$HOME/.workbuddy/skills/browserskill-pro"
-        "$HOME/.codex/skills/browserskill-pro"
+        "$HOME/.codebuddy/skills/zenx-bridge-skill"
+        "$HOME/.claude/skills/zenx-bridge-skill"
+        "$HOME/.claude/commands/zenx-bridge-skill"
+        "$HOME/.workbuddy/skills/zenx-bridge-skill"
+        "$HOME/.codex/skills/zenx-bridge-skill"
     )
 
     for path in "${possible_paths[@]}"; do
@@ -204,7 +204,7 @@ detect_target_path() {
     done
 
     # 默认使用 .codebuddy/skills
-    TARGET_PATH="$HOME/.codebuddy/skills/browserskill-pro"
+    TARGET_PATH="$HOME/.codebuddy/skills/zenx-bridge-skill"
     log_info "使用默认路径: $TARGET_PATH"
 }
 
@@ -337,7 +337,7 @@ show_success_results() {
 
     echo ""
     echo -e "${CYAN}$( printf '=%.0s' {1..50} )${NC}"
-    echo -e "${GREEN}${BOLD}✓ BrowserSkill Pro 安装成功！${NC}"
+    echo -e "${GREEN}${BOLD}✓ ZenX Bridge Skill 安装成功！${NC}"
     echo -e "${CYAN}$( printf '=%.0s' {1..50} )${NC}\n"
 
     # 显示安装详情
@@ -369,7 +369,7 @@ show_success_results() {
     echo -e "  ${BOLD}3️⃣  测试功能${NC}"
     echo -e "     在 CodeBuddy / WorkBuddy 对话框中输入:"
     echo -e ""
-    echo -e "     ${CYAN}使用 \$browserskill-pro 查看当前浏览器状态${NC}"
+    echo -e "     ${CYAN}使用 \$zenx-bridge-skill 查看当前浏览器状态${NC}"
     echo ""
 
     # 常用命令速查

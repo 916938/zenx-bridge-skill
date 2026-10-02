@@ -1,5 +1,5 @@
 """
-Smart retry handler with exponential backoff and jitter for BrowserSkill Pro v1.1.0
+Smart retry handler with exponential backoff and jitter for ZenX Bridge Skill v1.1.0
 
 Implements resilient retry logic:
 - Exponential backoff (1s → 2s → 4s → 8s)

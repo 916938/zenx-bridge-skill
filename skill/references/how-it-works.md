@@ -1,4 +1,4 @@
-# BrowserSkill Pro 的工作原理
+# ZenX Bridge Skill 的工作原理
 
 > **仅供人类维护者阅读。高度耗费上下文，不推荐 agent 在正常任务中查看。**
 >

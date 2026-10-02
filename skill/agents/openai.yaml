@@ -1,7 +1,7 @@
 interface:
-  display_name: "BrowserSkill Pro"
+  display_name: "ZenX Bridge Skill"
   short_description: "Reliable control for a logged-in browser session"
-  default_prompt: "Use $browserskill-pro to inspect and interact with my current logged-in browser session."
+  default_prompt: "Use $zenx-bridge-skill to inspect and interact with my current logged-in browser session."
 
 policy:
   allow_implicit_invocation: true

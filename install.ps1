@@ -1,11 +1,11 @@
 <#
 .SYNOPSIS
-    BrowserSkill Pro 一键安装脚本（CodeBuddy / WorkBuddy 环境）
+    ZenX Bridge Skill 一键安装脚本（CodeBuddy / WorkBuddy 环境）
 .DESCRIPTION
-    从 GitHub 仓库自动下载并安装 BrowserSkill Pro skill 到 CodeBuddy 或 WorkBuddy 的 skills 目录。
+    从 GitHub 仓库自动下载并安装 ZenX Bridge Skill skill 到 CodeBuddy 或 WorkBuddy 的 skills 目录。
     支持自定义分支、强制覆盖、多环境检测。
 .PARAMETER RepoUrl
-    GitHub 仓库地址（默认: https://github.com/916938/browserskill-pro.git）
+    GitHub 仓库地址（默认: https://github.com/916938/zenx-bridge-skill.git）
 .PARAMETER Branch
     要安装的分支或标签（默认: main）
 .PARAMETER TargetPath
@@ -19,18 +19,18 @@
     .\install.ps1 -Branch v1.0.0 -Force
     安装 v1.0.0 版本并覆盖已有文件
 .EXAMPLE
-    .\install.ps1 -TargetPath "C:\MySkills\browserskill-pro"
+    .\install.ps1 -TargetPath "C:\MySkills\zenx-bridge-skill"
     安装到自定义路径
 .NOTES
     文件名: install.ps1
-    作者: BrowserSkill Pro Team
+    作者: ZenX Bridge Skill Team
     版本: 1.1.0
 #>
 
 [CmdletBinding()]
 param(
     [Parameter(Mandatory = $false)]
-    [string]$RepoUrl = "https://github.com/916938/browserskill-pro.git",
+    [string]$RepoUrl = "https://github.com/916938/zenx-bridge-skill.git",
 
     [Parameter(Mandatory = $false)]
     [string]$Branch = "main",
@@ -71,27 +71,27 @@ function Get-InstallPaths {
     @(
         @{
             Name = "CodeBuddy (User Profile)"
-            Path = "$env:USERPROFILE\.codebuddy\skills\browserskill-pro"
+            Path = "$env:USERPROFILE\.codebuddy\skills\zenx-bridge-skill"
         },
         @{
             Name = "WorkBuddy (User Profile)"
-            Path = "$env:USERPROFILE\.workbuddy\skills\browserskill-pro"
+            Path = "$env:USERPROFILE\.workbuddy\skills\zenx-bridge-skill"
         },
         @{
             Name = "Claude Code (User Profile)"
-            Path = "$env:USERPROFILE\.claude\skills\browserskill-pro"
+            Path = "$env:USERPROFILE\.claude\skills\zenx-bridge-skill"
         },
         @{
             Name = "Claude Code (Commands)"
-            Path = "$env:USERPROFILE\.claude\commands\browserskill-pro"
+            Path = "$env:USERPROFILE\.claude\commands\zenx-bridge-skill"
         },
         @{
             Name = "Codex (User Profile)"
-            Path = "$env:USERPROFILE\.codex\skills\browserskill-pro"
+            Path = "$env:USERPROFILE\.codex\skills\zenx-bridge-skill"
         },
         @{
             Name = "CodeBuddy (AppData)"
-            Path = "$env:APPDATA\CodeBuddy\skills\browserskill-pro"
+            Path = "$env:APPDATA\CodeBuddy\skills\zenx-bridge-skill"
         }
     )
 }
@@ -112,7 +112,7 @@ function Resolve-TargetPath {
     }
 
     # 默认使用 .codebuddy/skills
-    return "$env:USERPROFILE\.codebuddy\skills\browserskill-pro"
+    return "$env:USERPROFILE\.codebuddy\skills\zenx-bridge-skill"
 }
 
 function Remove-TempDirectory {
@@ -127,7 +127,7 @@ function Remove-TempDirectory {
 # ============================================================
 
 Write-ColorOutput "`n========================================" Cyan
-Write-ColorOutput "  BrowserSkill Pro 安装向导" White
+Write-ColorOutput "  ZenX Bridge Skill 安装向导" White
 Write-ColorOutput "  版本: 1.1.0 | 平台: Windows" Gray
 Write-ColorOutput "========================================`n" Cyan
 
@@ -237,7 +237,7 @@ try {
 
     # 步骤 7：显示安装结果
     Write-ColorOutput "`n$( '=' * 50 )" Cyan
-    Write-ColorOutput "✅ BrowserSkill Pro 安装成功！" Green
+    Write-ColorOutput "✅ ZenX Bridge Skill 安装成功！" Green
     Write-ColorOutput "$( '=' * 50 )`n" Cyan
 
     # 显示安装详情
@@ -269,7 +269,7 @@ try {
     Write-ColorOutput "  3️⃣  测试功能" White
     Write-ColorOutput "     在 CodeBuddy / WorkBuddy 对话框中输入：" Gray
     Write-ColorOutput ""
-    Write-ColorOutput '     使用 $browserskill-pro 查看当前浏览器状态' -f $resolvedTargetPath Cyan
+    Write-ColorOutput '     使用 $zenx-bridge-skill 查看当前浏览器状态' -f $resolvedTargetPath Cyan
     Write-ColorOutput ""
 
     # 显示快速命令参考
@@ -306,7 +306,7 @@ catch {
     Write-ColorOutput "   3. 验证仓库地址和分支名称是否正确" Gray
     Write-ColorOutput "   4. 检查目标目录是否有写入权限" Gray
     Write-ColorOutput "   5. 如果问题持续，请查看 GitHub Issues:" Gray
-    Write-ColorOutput "      https://github.com/916938/browserskill-pro/issues" Cyan
+    Write-ColorOutput "      https://github.com/916938/zenx-bridge-skill/issues" Cyan
     Write-ColorOutput ""
     
     exit 1

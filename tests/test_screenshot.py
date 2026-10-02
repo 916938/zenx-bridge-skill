@@ -92,6 +92,64 @@ class TestParseArgs(unittest.TestCase):
         self.assertEqual(args.timeout, 60)
 
 
+    def test_full_page_flag_defaults_to_false(self):
+        with patch('sys.argv', ['screenshot.py']):
+            args = parse_args()
+
+        self.assertFalse(args.full_page)
+
+    def test_full_page_flag(self):
+        with patch('sys.argv', ['screenshot.py', '--full-page']):
+            args = parse_args()
+
+        self.assertTrue(args.full_page)
+
+    def test_full_page_rejects_selector(self):
+        """--selector with --full-page must stop before contacting the daemon."""
+        from screenshot import main
+
+        with patch('sys.argv', [
+            'screenshot.py', '--session', 'abc123',
+            '--selector', '@e3', '--full-page',
+        ]):
+            with self.assertRaises(SystemExit) as ctx:
+                main()
+
+        self.assertIn("mutually exclusive", str(ctx.exception))
+
+    @patch('screenshot.bsk')
+    def test_full_page_forwards_flag_and_duration(self, mock_bsk):
+        from screenshot import main
+
+        mock_bsk.return_value = {"path": None}
+
+        with patch('sys.argv', [
+            'screenshot.py', '--session', 'abc123',
+            '--full-page', '--timeout', '300',
+        ]):
+            with self.assertRaises(SystemExit):
+                main()
+
+        mock_bsk.assert_called_once_with(
+            "screenshot", "abc123", **{"full-page": True, "timeout": "300s"}
+        )
+
+    @patch('screenshot.bsk')
+    def test_viewport_capture_omits_timeout_flag(self, mock_bsk):
+        """--timeout is only forwarded for full-page captures."""
+        from screenshot import main
+
+        mock_bsk.return_value = {"path": None}
+
+        with patch('sys.argv', [
+            'screenshot.py', '--session', 'abc123', '--timeout', '45',
+        ]):
+            with self.assertRaises(SystemExit):
+                main()
+
+        mock_bsk.assert_called_once_with("screenshot", "abc123")
+
+
 class TestDefaultOutputPath(unittest.TestCase):
     """Test default output path generation."""
 

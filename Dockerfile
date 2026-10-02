@@ -1,10 +1,10 @@
 # ============================================================
-# BrowserSkill Pro - Docker 镜像
+# ZenX Bridge Skill - Docker 镜像
 # 多阶段构建：包含 bsk CLI + Python helpers + 浏览器扩展
 # 
 # 用法:
-#   构建:  docker build -t browserskill-pro:latest .
-#   运行:  docker run --rm browserskill-pro doctor.py --help
+#   构建:  docker build -t zenx-bridge-skill:latest .
+#   运行:  docker run --rm zenx-bridge-skill doctor.py --help
 #   开发:  docker-compose up -d  (完整 daemon + 扩展环境)
 #
 # 支持的平台: linux/amd64, linux/arm64 (Apple Silicon)
@@ -15,10 +15,10 @@
 # ----------------------------------------------------------
 FROM python:3.12-slim AS base
 
-LABEL maintainer="BrowserSkill Pro Team"
-LABEL description="BrowserSkill Pro - AI Agent 浏览器控制 Skill"
+LABEL maintainer="ZenX Bridge Skill Team"
+LABEL description="ZenX Bridge Skill - AI Agent 浏览器控制 Skill"
 LABEL version="1.1.0"
-LABEL repository="https://github.com/916938/browserskill-pro"
+LABEL repository="https://github.com/916938/zenx-bridge-skill"
 
 # 设置环境变量
 ENV PYTHONDONTWRITEBYTECODE=1 \
