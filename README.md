@@ -91,6 +91,11 @@ Tencent/BrowserSkill (Official)
 
 For the latest stable base version with Windows compatibility fixes and multi-browser support, see [browserskill-new](https://github.com/916938/zenx-bridge).
 
+> **Naming map** (the three names below all mean the CLI/extension fork) — GitHub slug `zenx-bridge`;
+> older docs call it `browserskill-new`; **local checkout next to this repo is `../zenx-bridge-main`**.
+> Upstream cooperation rules, including which fork-only changes must be mirrored into this package, are in
+> `AGENTS.md` → Companion repositories; the sync ledger lives in `../zenx-bridge-main/docs/UPSTREAM_SYNC.md`.
+
 ### Use Cases
 
 - Reading websites where users are already logged in

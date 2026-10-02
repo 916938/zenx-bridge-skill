@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+#### Upstream sync playbook (2026-10-02)
+
+Distilled the recurring ZenX Bridge ↔ Tencent/BrowserSkill sync into reusable material, after the 2026-10-02 batch (`fa953dc` → `3f10983`: 36 commits ported, ~100 skipped).
+
+- `skill/references/upstream-sync.md` — the procedure: standing invariants (protocol compatibility, frozen remote/server paths, version line above upstream), the scope question to ask before starting, the five-step flow, the ordering trap (`git log` sorts by date, not topology), conflict-adjudication rules per file kind, the table of feature lines that cannot be cherry-picked in isolation (recoverable session starts, task UI/rename, Windows self-update, dsh SDK migration, skill bundles/i18n, debug forensics), the verification matrix with accepted pre-existing failures, environment gotchas, and the "improve this file" trigger list.
+- `scripts/upstream_sync.py` — read-only helper: `triage` (per-commit size / frozen-path contact / overlap with our edits, plain or `--markdown`), `applied` (already cherry-picked), `order` (ancestor check before picking), `table` (upstream→ours rows for `UPSTREAM_SYNC.md`). Targets `../zenx-bridge-main` by default.
+- `tests/test_upstream_sync.py` — unit tests for the classification, rendering and upstream-hash helpers.
+- `AGENTS.md` / `skill/SKILL.md` — registered the new reference and helper.
+
 #### Synced with `browserskill-new`: quit a browser — `bsk browsers close` (2026-09-18)
 
 `916938/browserskill-new` added a `browser.close` RPC (commits `1628377` → `013e017`, 2026-09-17), the first command that reaches outside a session. It is a **fork-build capability** and does not exist in Tencent/BrowserSkill releases.

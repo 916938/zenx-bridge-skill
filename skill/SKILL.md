@@ -13,6 +13,11 @@ Control the user's live browser through the bsk CLI.
 (`browsers close`, `--browser-id` tab management, `tab observe`, `invoke`, `templates`, `completion`) exist only in the
 fork. The fork keeps its own version line, numbered above the upstream release it last synced (upstream 0.3.0 → fork 0.4.0).
 
+**Two skills coexist — do not confuse them.** This package installs as `zenx-bridge-skill` (helpers, examples, layered
+references). The fork itself ships a lighter bundled skill named `zenx-bridge`, installed by `bsk install-skill`. Both
+describe the same CLI; the fork's copy is embedded in its binary (`crates/bsk-cli/src/skill_install/mod.rs`) while this
+one adds tooling. When a fork-only command changes, both need the update — see `AGENTS.md` → Companion repositories.
+
 Current recommended versions:
 - **bsk CLI**: 0.4.0 (fork build)
 - **BrowserSkill extension**: 0.4.0 (fork build; CLI / Extension / DSH Plugin share one semver since 0.2.2)
@@ -474,6 +479,7 @@ These are loaded on demand, not with every task:
 | [references/operation-audit.md](references/operation-audit.md) | What the local audit log records and where it lives (0.2.4+) |
 | [references/sandboxed-agents.md](references/sandboxed-agents.md) | A sandbox reaps background daemons (shared `BSK_HOME` + `BSK_AUTO_START=0`) |
 | [references/user-tab-control.md](references/user-tab-control.md) | Reading, selecting, and closing a user's browser instance without borrowing tabs (fork build) |
+| [references/upstream-sync.md](references/upstream-sync.md) | Fork maintenance: syncing with Tencent/BrowserSkill — not a browser task |
 | [references/how-it-works.md](references/how-it-works.md) | Human maintainers: architecture and design rationale |
 
 ## Minimal workflows
