@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+#### Switch the unpacked extension across Edge profiles (2026-10-04)
+
+The fork moved from `D:\916938\browserskill-new` to `D:\916938\zenx-bridge-main`, leaving 20 Edge profiles with a "load unpacked" entry pointing at the old build directory.
+
+- `scripts/switch_extension.py` — rewrites the load path in each profile's `Secure Preferences` (unpacked extensions are recorded there, not in `User Data\Extensions`). Refuses to run while Edge is alive, validates the target `manifest.json`, backs up every file it edits, and is idempotent (`already new` profiles are left alone). Default dry run; `--apply` required to write. Flags: `--profiles`, `--old-path`, `--new-path`, `--user-data-dir`, `--json`, `--no-backup`, `--force`.
+- `tests/test_switch_extension.py` — 7 unit tests over profile discovery, path normalisation, planning and idempotence.
+- `skill/references/switch-dev-extension.md` — how Chromium stores unpacked extensions, this machine's layout (20 profiles, shared user-data dir, extension id `agcgbdanbihfkcdmgegblkioiiepecln`), the procedure and failure modes.
+- `AGENTS.md` / `skill/SKILL.md` — registered the reference and helper.
+
 #### Upstream sync playbook (2026-10-02)
 
 Distilled the recurring ZenX Bridge ↔ Tencent/BrowserSkill sync into reusable material, after the 2026-10-02 batch (`fa953dc` → `3f10983`: 36 commits ported, ~100 skipped).
