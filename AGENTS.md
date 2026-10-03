@@ -35,6 +35,7 @@ Rules that keep the two in step:
 | `skill/references/sandboxed-agents.md` | Shared daemon (`BSK_HOME` + `BSK_AUTO_START=0`) for sandboxed shells. |
 | `skill/references/user-tab-control.md` | `--browser-id` user tabs, read-only `tab observe`, and `bsk browsers close` (fork build) |
 | `skill/references/upstream-sync.md` | Fork maintenance: upstream sync procedure, unportable feature lines, verification matrix |
+| `skill/references/switch-dev-extension.md` | Repointing the unpacked extension across Edge profiles after a rebuild or repo move |
 | `skill/references/command-registry.json` | **Single source of truth for the command tables** in `SKILL.md` and `protocol.md`. |
 | `skill/references/how-it-works.md` | Architecture and design rationale (human-only, high context cost). |
 | `skill/examples/` | End-to-end workflow examples (form fill, scroll, popup, network, record + replay, long screenshot, user tabs). |
@@ -83,6 +84,17 @@ python3 scripts/upstream_sync.py applied             # commits already cherry-pi
 python3 scripts/upstream_sync.py order <hash>...     # confirm ancestor order before picking
 python3 scripts/upstream_sync.py table               # upstream→ours rows for UPSTREAM_SYNC.md §5
 ```
+
+### Repointing the unpacked extension (many Edge profiles)
+
+```bash
+python3 scripts/switch_extension.py            # dry run
+python3 scripts/switch_extension.py --apply    # after closing every Edge window
+```
+
+Rewrites the "load unpacked" path in each profile's `Secure Preferences`
+(that is where unpacked extensions live — not `User Data\Extensions`). See
+`skill/references/switch-dev-extension.md`.
 
 Full procedure, invariants and verification matrix live in
 `skill/references/upstream-sync.md`. After a batch, also update
