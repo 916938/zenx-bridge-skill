@@ -480,6 +480,7 @@ These are loaded on demand, not with every task:
 | [references/sandboxed-agents.md](references/sandboxed-agents.md) | A sandbox reaps background daemons (shared `BSK_HOME` + `BSK_AUTO_START=0`) |
 | [references/user-tab-control.md](references/user-tab-control.md) | Reading, selecting, and closing a user's browser instance without borrowing tabs (fork build) |
 | [references/upstream-sync.md](references/upstream-sync.md) | Fork maintenance: syncing with Tencent/BrowserSkill — not a browser task |
+| [references/switch-dev-extension.md](references/switch-dev-extension.md) | Repointing the unpacked extension across many Edge profiles after a rebuild/repo move |
 | [references/how-it-works.md](references/how-it-works.md) | Human maintainers: architecture and design rationale |
 
 ## Minimal workflows
